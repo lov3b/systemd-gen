@@ -81,7 +81,7 @@ Example timer formats: daily at 2 PM -> "*-*-* 14:00:00", every Monday at 1 AM -
     os.makedirs(os.path.dirname(service_filename), exist_ok=True)
 
     service_content = create_service_file(
-        args.working_dir, args.command, args.user, args.description
+        os.path.realpath(args.working_dir), args.command, args.user, args.description
     )
     save_file(service_content, service_filename)
     print(f"Service file saved to {service_filename}")
