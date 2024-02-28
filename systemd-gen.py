@@ -4,14 +4,15 @@ import argparse
 import os
 
 
-def create_service_file(working_dir, command, user, description="My custom service"):
+def create_service_file(
+    working_dir: str, command: str, description: str = "My custom service"
+):
     return f"""[Unit]
 Description={description}
 After=network.target
 
 [Service]
 Type=simple
-User={user}
 WorkingDirectory={working_dir}
 ExecStart={command}
 Restart=on-failure
@@ -21,7 +22,7 @@ WantedBy=default.target
 """
 
 
-def create_timer_file(name, on_calendar):
+def create_timer_file(name: str, on_calendar: str):
     return f"""[Unit]
 Description=Timer for {name} service
 
@@ -34,14 +35,14 @@ WantedBy=timers.target
 """
 
 
-def save_file(content, filename):
+def save_file(content: str, filename: str):
     with open(filename, "w") as f:
         f.write(content)
 
 
 def main():
     parser = argparse.ArgumentParser(
-        description='Generate a systemd service file and optionally a timer unit. \
+        description='Generate a user systemd service file and optionally a timer unit. \
 Example timer formats: daily at 2 PM -> "*-*-* 14:00:00", every Monday at 1 AM -> "Mon *-*-* 01:00:00".',
         formatter_class=argparse.RawTextHelpFormatter,
     )
@@ -68,12 +69,6 @@ Example timer formats: daily at 2 PM -> "*-*-* 14:00:00", every Monday at 1 AM -
         default="A custom systemd service",
         help="Description of the service",
     )
-    parser.add_argument(
-        "-u",
-        "--user",
-        default=os.getlogin(),
-        help="User to run the service as (defaults to the current user)",
-    )
 
     args = parser.parse_args()
 
@@ -81,7 +76,7 @@ Example timer formats: daily at 2 PM -> "*-*-* 14:00:00", every Monday at 1 AM -
     os.makedirs(os.path.dirname(service_filename), exist_ok=True)
 
     service_content = create_service_file(
-        os.path.realpath(args.working_dir), args.command, args.user, args.description
+        os.path.realpath(args.working_dir), args.command, args.description
     )
     save_file(service_content, service_filename)
     print(f"Service file saved to {service_filename}")
